@@ -40,6 +40,7 @@ RUN php artisan key:generate || true
 # Set permissions for Laravel storage and cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
+ENV NODE_OPTIONS=--openssl-legacy-provider
 # Install and build frontend assets
 RUN npm install && npm run production
 
