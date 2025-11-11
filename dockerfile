@@ -45,11 +45,6 @@ ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN npm install && npm run production
 RUN npm prune --production
 
-# Clear and cache config/routes/views for production
-RUN php artisan config:cache \
- && php artisan route:cache \
- && php artisan view:cache
-
 # Expose port 8000
 EXPOSE 8000
 
