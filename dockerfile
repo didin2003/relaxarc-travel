@@ -28,7 +28,7 @@ COPY . .
 RUN if [ ! -f .env ]; then cp .env.example .env; fi
 
 # Install PHP dependencies
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 # define namespace
 RUN composer dump-autoload
@@ -43,9 +43,15 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 ENV NODE_OPTIONS=--openssl-legacy-provider
 # Install and build frontend assets
 RUN npm install && npm run production
+RUN npm prune --production
+
+# Clear and cache config/routes/views for production
+RUN php artisan config:cache \
+ && php artisan route:cache \
+ && php artisan view:cache
 
 # Expose port 8000
 EXPOSE 8000
 
 # Start Laravel development server
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+CMD ["php-fpm"]
